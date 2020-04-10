@@ -1,5 +1,7 @@
 import pymunk
 import pygame
+from pymunk.vec2d import Vec2d
+
 
 
 def pymunkToPygameCoords(vector, displayHeight):
@@ -13,19 +15,19 @@ def drawPymunkCircle(pymunk_circle, screen):
     x,y = pymunkToPygameCoords(pymunk_circle.shape.body.position, height)
     pygame.gfxdraw.circle(screen, int(x), int(y), int(pymunk_circle.shape.radius), (255, 255, 255))
 
-def drawPymunkPoly(pymunk_poly, screen):
+def drawPymunkPoly(pymunk_poly, screen, relativeTo=Vec2d(0.0, 0.0)):
     height = screen.get_height()
     lineThickness = 2
     points = []
     for v in pymunk_poly.get_vertices():
         body_position = pymunk_poly.body.position
         relative_position = v.rotated(pymunk_poly.body.angle)
-        x,y = pymunkToPygameCoords(relative_position + body_position, height)
+        x,y = pymunkToPygameCoords(relative_position + body_position + relativeTo, height)
         points.append((int(x), int(y)))
     last_v = pymunk_poly.get_vertices()[0]
     body_position = pymunk_poly.body.position
     relative_position = last_v.rotated(pymunk_poly.body.angle)
-    x,y = pymunkToPygameCoords(relative_position + body_position, height)
+    x,y = pymunkToPygameCoords(relative_position + body_position + relativeTo, height)
     points.append((int(x), int(y)))
     pygame.draw.lines(screen, (255, 255, 255), False, points, lineThickness)
 
@@ -40,3 +42,22 @@ def drawPymunkSegments(body, screen):
         points.append((int(ax), int(ay)))
         points.append((int(bx), int(by)))
     pygame.draw.lines(screen, (255, 255, 255), False, points, lineThickness)
+
+
+# def drawPolyRelativeToBody(polyToDraw, bodyAnchor, screen):
+#     height = screen.get_height()
+#     lineThickness = 2
+#     points = []
+#     for v in polyToDraw.get_vertices():
+#         body_position = polyToDraw.body.position
+#         body_anchor_position = bodyAnchor.position
+#         relative_position = v.rotated(polyToDraw.body.angle)
+#         x,y = pymunkToPygameCoords(relative_position + body_position + body_anchor_position, height)
+#         points.append((int(x), int(y)))
+#     last_v = polyToDraw.get_vertices()[0]
+#     body_position = polyToDraw.body.position
+#     relative_position = last_v.rotated(polyToDraw.body.angle)
+#     x,y = pymunkToPygameCoords(relative_position + body_position + body_anchor_position, height)
+#     points.append((int(x), int(y)))
+#     pygame.draw.lines(screen, (255, 255, 255), False, points, lineThickness)
+
