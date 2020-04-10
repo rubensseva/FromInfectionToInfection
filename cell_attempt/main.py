@@ -21,11 +21,11 @@ options = pymunk.pygame_util.DrawOptions(screen)
 space = pymunk.Space()
 space.damping = 0.7
 
-cell = Cell()
+first_cell = Cell()
 
-cells = [cell]
+cells = [first_cell]
 
-space.add(cell.shape.body, cell.shape)
+space.add(first_cell.shape.body, first_cell.shape)
 
 
 count = 0
@@ -38,12 +38,14 @@ while not done:
     lastTime = time.time()
     space.step(elapsedTime)
     
-    cell.relative_space.step(elapsedTime)
+    for cell in cells:
+        cell.relative_space.step(elapsedTime)
 
 
     cell.apply_rand_force()
 
-    drawPymunkCircle(cell.shape, screen)
+    for cell in cells: 
+        drawPymunkCircle(cell.shape, screen)
 
     for cell in cells:
         for snake in cell.snakes:
@@ -82,7 +84,9 @@ while not done:
             done = True
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                cell.addSnake()
+                cell = Cell()
+                space.add(cell.shape.body, cell.shape)
+                cells.append(cell)
                 print("Space pressed")
             if event.key == pygame.K_a:
                 constraint = cell.snakes[0].grow()

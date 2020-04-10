@@ -10,11 +10,11 @@ head_init_moment = 1000000
 
 # When changing height, should also change pivot joint pos
 # Heights should be similar
-init_width = 10
-init_height = 20
-head_init_width = 12
-head_init_height = 20
-pivot_joint_pos = 11
+init_width = 5
+init_height = 10
+head_init_width = 7
+head_init_height = 10
+pivot_joint_pos = 7
 
 snake_rotation_force = 80
 snake_rotation_y_point = 20
@@ -46,6 +46,7 @@ class Snake:
         new_poly = pymunk.Poly.create_box(new_body, (init_width, init_height))
         self.snake.append(new_poly)
         c = pymunk.PivotJoint(new_body, last_body, (0, pivot_joint_pos), (0, -pivot_joint_pos))
+        c.max_force = 100000
         return c
 
     def moveForward(self):
