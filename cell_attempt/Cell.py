@@ -7,7 +7,7 @@ from Snake import Snake
 
 init_x, init_y = 400, 400
 init_age = 10
-init_rad = 200
+init_rad = 100
 
 
 class Cell:
@@ -50,8 +50,8 @@ class Cell:
         self.snakes = []
 
     def apply_rand_force(self):
-        rand_x = (0.5 - random.random()) * 1
-        rand_y = (0.5 - random.random()) * 1
+        rand_x = (0.5 - random.random()) * 5
+        rand_y = (0.5 - random.random()) * 5
         self.shape.body.apply_impulse_at_local_point((rand_x, rand_y), point=(0, 0))
 
     def split(self):
@@ -91,9 +91,10 @@ class Cell:
 
         # Move snakes
         for snake in self.snakes:
-            if random.random() > 0.6:
-                snake.moveForward()
-            elif random.random() > 0.3:
-                snake.moveLeft()
-            else:
-                snake.moveRight()
+            snake.move()
+            if (random.random() < 0.1):
+                snake.change_dir_ask()
+            
+            
+
+

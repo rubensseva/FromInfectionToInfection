@@ -21,6 +21,26 @@ options = pymunk.pygame_util.DrawOptions(screen)
 space = pymunk.Space()
 space.damping = 0.7
 
+floor = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
+floor.position = width / 2, 0
+floor_poly = pymunk.Poly.create_box(floor, (width, 10))
+space.add(floor, floor_poly)
+
+right_wall = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
+right_wall.position = width, height / 2
+right_wall_poly = pymunk.Poly.create_box(right_wall, (10, height))
+space.add(right_wall, right_wall_poly)
+
+roof = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
+roof.position = width / 2, height
+roof_poly = pymunk.Poly.create_box(roof, (width, 10))
+space.add(roof, roof_poly)
+
+left_wall = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
+left_wall.position = 0, height / 2
+left_wall_poly = pymunk.Poly.create_box(left_wall, (10, height))
+space.add(left_wall, left_wall_poly)
+
 first_cell = Cell()
 
 cells = [first_cell]
@@ -35,13 +55,16 @@ while not done:
     screen.fill((0, 0, 0))
     currentTime = time.time()
     elapsedTime = currentTime - lastTime
-    lastTime = time.time()
     space.step(elapsedTime)
 
     for cell in cells:
+        currentTime = time.time()
+        elapsedTime = currentTime - lastTime
         cell.relative_space.step(elapsedTime)
+    lastTime = time.time()
 
-    cell.apply_rand_force()
+    for cell in cells:
+        cell.apply_rand_force()
 
     for cell in cells:
         drawPymunkCircle(cell.shape, screen)
@@ -57,7 +80,6 @@ while not done:
 
     # drawPymunkPoly(inner_block_poly, screen, relativeTo=outer_block.position)
     # drawPolyRelativeToBody(inner_block_poly, outer_block, screen)
-    print(cell.snakes)
 
     keystate = pygame.key.get_pressed()
     if keystate[pygame.K_LEFT]:

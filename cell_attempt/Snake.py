@@ -1,12 +1,15 @@
 import pymunk
 from pymunk.vec2d import Vec2d
 
+import random
+import time
+
 
 init_mass = 10
 init_moment = 100
 
 head_init_mass = 10000
-head_init_moment = 1000000
+head_init_moment = 100000
 
 # When changing height, should also change pivot joint pos
 # Heights should be similar
@@ -16,9 +19,9 @@ head_init_width = 7
 head_init_height = 10
 pivot_joint_pos = 7
 
-snake_rotation_force = 80
+snake_rotation_force = 70
 snake_rotation_y_point = 20
-snake_move_force = 10000
+snake_move_force = 5000
 
 
 class Snake:
@@ -33,6 +36,12 @@ class Snake:
         )
         self.head = head_poly
         self.snake = [self.head]
+
+        self.time_of_last_turn = time.time() - 10000
+        self.move_state = "FORWARD"
+        self.move_dict = {"FORWARD": self.moveForward, "LEFT": self.moveLeft, "RIGHT": self.moveRight}
+        self.change_dir_ask()
+
 
     def getLastBlock(self):
         return self.snake[len(self.snake) - 1]
@@ -51,6 +60,22 @@ class Snake:
         )
         c.max_force = 100000
         return c
+
+    def change_dir_ask(self):
+        current_time = time.time()
+        if (current_time - self.time_of_last_turn < 1):
+            return
+        rand = random.random()
+        if (rand < 0.33):
+            self.move_state = "FORWARD"
+        elif (rand < 0.66):
+            self.move_state = "LEFT"
+        else: 
+            self.move_state = "RIGHT"
+        self.time_of_last_turn = time.time()
+
+    def move(self):
+        self.move_dict[self.move_state]()
 
     def moveForward(self):
         head_body = self.head.body
