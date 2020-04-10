@@ -37,14 +37,13 @@ while not done:
     elapsedTime = currentTime - lastTime
     lastTime = time.time()
     space.step(elapsedTime)
-    
+
     for cell in cells:
         cell.relative_space.step(elapsedTime)
 
-
     cell.apply_rand_force()
 
-    for cell in cells: 
+    for cell in cells:
         drawPymunkCircle(cell.shape, screen)
 
     for cell in cells:
@@ -53,7 +52,7 @@ while not done:
                 drawPymunkPoly(snake_part, screen, relativeTo=cell.shape.body.position)
 
     for cell in cells:
-        if (random.random() < 0.1):
+        if random.random() < 0.1:
             cell.timeStep()
 
     # drawPymunkPoly(inner_block_poly, screen, relativeTo=outer_block.position)
@@ -97,6 +96,5 @@ while not done:
             if event.key == pygame.K_f:
                 cell.snakes[0].moveForward()
                 print("Space pressed")
-            
 
     pygame.display.flip()

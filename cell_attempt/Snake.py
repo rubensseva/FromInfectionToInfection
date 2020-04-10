@@ -1,5 +1,5 @@
 import pymunk
-from pymunk.vec2d  import Vec2d
+from pymunk.vec2d import Vec2d
 
 
 init_mass = 10
@@ -20,8 +20,9 @@ snake_rotation_force = 80
 snake_rotation_y_point = 20
 snake_move_force = 10000
 
+
 class Snake:
-    def __init__(self, init_position=Vec2d(0.0, 0.0), init_angle = 0.0):
+    def __init__(self, init_position=Vec2d(0.0, 0.0), init_angle=0.0):
         head_body = pymunk.Body(
             head_init_mass, head_init_moment, body_type=pymunk.Body.DYNAMIC
         )
@@ -45,13 +46,16 @@ class Snake:
         new_body.position = last_body.position + last_body_end_position
         new_poly = pymunk.Poly.create_box(new_body, (init_width, init_height))
         self.snake.append(new_poly)
-        c = pymunk.PivotJoint(new_body, last_body, (0, pivot_joint_pos), (0, -pivot_joint_pos))
+        c = pymunk.PivotJoint(
+            new_body, last_body, (0, pivot_joint_pos), (0, -pivot_joint_pos)
+        )
         c.max_force = 100000
         return c
 
     def moveForward(self):
         head_body = self.head.body
         head_body.apply_impulse_at_local_point((0, snake_move_force), (0, 0))
+
     def moveRight(self):
         head_body = self.head.body
         head_body.apply_impulse_at_local_point(
@@ -60,6 +64,7 @@ class Snake:
         head_body.apply_impulse_at_local_point(
             (-snake_rotation_force, 0), (0, -snake_rotation_y_point)
         )
+
     def moveLeft(self):
         head_body = self.head.body
         head_body.apply_impulse_at_local_point(
@@ -68,4 +73,3 @@ class Snake:
         head_body.apply_impulse_at_local_point(
             (snake_rotation_force, 0), (0, -snake_rotation_y_point)
         )
-

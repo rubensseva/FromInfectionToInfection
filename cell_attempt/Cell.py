@@ -9,6 +9,7 @@ init_x, init_y = 400, 400
 init_age = 10
 init_rad = 200
 
+
 class Cell:
     def __init__(self, x=init_x, y=init_y):
         init_mass = 1
@@ -23,37 +24,35 @@ class Cell:
 
         relative_boundary_body = pymunk.Body(0, 0, pymunk.Body.KINEMATIC)
         relative_boundary_body.position = 0, 0
-        
+
         r = init_rad
         segments_positions = [
-                [(r, 0), (r / 2, r / 2)],
-                [(r / 2, r / 2), (0, r)],
-                [(0, r), (-(r / 2), r / 2)],
-                [(-(r / 2), r /2 ), (-r, 0) ],
-                [(-r, 0), (-(r/2), -(r/2)) ],
-                [(-(r/2), -(r/2)), (0, -r) ],
-                [(0, -r), (r/2, -(r/2)) ],
-                [(r/2, -(r/2)), (r, 0)  ]
+            [(r, 0), (r / 2, r / 2)],
+            [(r / 2, r / 2), (0, r)],
+            [(0, r), (-(r / 2), r / 2)],
+            [(-(r / 2), r / 2), (-r, 0)],
+            [(-r, 0), (-(r / 2), -(r / 2))],
+            [(-(r / 2), -(r / 2)), (0, -r)],
+            [(0, -r), (r / 2, -(r / 2))],
+            [(r / 2, -(r / 2)), (r, 0)],
         ]
 
         segments = [
-            pymunk.Segment(relative_boundary_body, segment_positions[0], segment_positions[1], 1)
+            pymunk.Segment(
+                relative_boundary_body, segment_positions[0], segment_positions[1], 1
+            )
             for segment_positions in segments_positions
         ]
 
         objects = [relative_boundary_body] + segments
         self.relative_space.add(objects)
 
-
-
         self.snakes = []
 
     def apply_rand_force(self):
         rand_x = (0.5 - random.random()) * 1
         rand_y = (0.5 - random.random()) * 1
-        self.shape.body.apply_impulse_at_local_point(
-            (rand_x, rand_y), point=(0, 0)
-        )
+        self.shape.body.apply_impulse_at_local_point((rand_x, rand_y), point=(0, 0))
 
     def split(self):
         self.age = init_age
@@ -67,22 +66,24 @@ class Cell:
         self.age += 1
 
     def addSnake(self):
-        rand_x = random.uniform(-init_rad / 4,init_rad / 4)
-        rand_y = random.uniform(-init_rad / 4,init_rad / 4)
+        rand_x = random.uniform(-init_rad / 4, init_rad / 4)
+        rand_y = random.uniform(-init_rad / 4, init_rad / 4)
         rand_angle = random.uniform(-3.0, 3.0)
         snake = Snake(init_position=Vec2d(rand_x, rand_y), init_angle=rand_angle)
         for poly in snake.snake:
             self.relative_space.add(poly.body, poly)
         self.snakes.append(snake)
-    
+
     def timeStep(self):
         # Create new snakes
-        if (random.random() < 0.01):
+        if random.random() < 0.01:
             self.addSnake()
 
         # Grow snakes
         for snake in self.snakes:
-            if ((len(snake.snake) < 5 and random.random() < 0.01) or random.random() < 0.0001):
+            if (
+                len(snake.snake) < 5 and random.random() < 0.01
+            ) or random.random() < 0.0001:
                 constraint = snake.grow()
                 new_snake_part = snake.getLastBlock()
                 self.relative_space.add(new_snake_part.body, new_snake_part)
@@ -90,10 +91,9 @@ class Cell:
 
         # Move snakes
         for snake in self.snakes:
-            if (random.random() > 0.6): 
+            if random.random() > 0.6:
                 snake.moveForward()
-            elif (random.random() > 0.3): 
+            elif random.random() > 0.3:
                 snake.moveLeft()
             else:
                 snake.moveRight()
-
