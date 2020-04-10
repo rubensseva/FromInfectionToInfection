@@ -1,4 +1,4 @@
-import pymunk               # Import pymunk..
+import pymunk  # Import pymunk..
 import pymunk.pygame_util
 import pygame
 import pygame.gfxdraw
@@ -25,11 +25,15 @@ inner_space.damping = 0.7
 outer_block = pymunk.Body(1, 1666, body_type=pymunk.Body.DYNAMIC)
 outer_block.position = 400, 400
 segments_positions = [
-        [(-50, 50), (50, 50)],
-        [(50, 50), (50, -50)],
-        [(50, -50), (-50, -50)],
-        [(-50, -50), (-50, 50)]]
-segments = [pymunk.Segment(outer_block, segment_positions[0], segment_positions[1], 1) for segment_positions in segments_positions]
+    [(-50, 50), (50, 50)],
+    [(50, 50), (50, -50)],
+    [(50, -50), (-50, -50)],
+    [(-50, -50), (-50, 50)],
+]
+segments = [
+    pymunk.Segment(outer_block, segment_positions[0], segment_positions[1], 1)
+    for segment_positions in segments_positions
+]
 objects = [outer_block] + segments
 outer_space.add(objects)
 
@@ -37,11 +41,15 @@ outer_space.add(objects)
 inner_border = pymunk.Body(1, 1666, body_type=pymunk.Body.KINEMATIC)
 inner_border.position = 0, 0
 segments_positions = [
-        [(-50, 50), (50, 50)],
-        [(50, 50), (50, -50)],
-        [(50, -50), (-50, -50)],
-        [(-50, -50), (-50, 50)]]
-segments = [pymunk.Segment(inner_border, segment_positions[0], segment_positions[1], 1) for segment_positions in segments_positions]
+    [(-50, 50), (50, 50)],
+    [(50, 50), (50, -50)],
+    [(50, -50), (-50, -50)],
+    [(-50, -50), (-50, 50)],
+]
+segments = [
+    pymunk.Segment(inner_border, segment_positions[0], segment_positions[1], 1)
+    for segment_positions in segments_positions
+]
 objects = [inner_border] + segments
 inner_space.add(objects)
 
@@ -52,12 +60,12 @@ inner_space.add(inner_block, inner_block_poly)
 
 lastTime = time.time()
 done = False
-while not done:         
+while not done:
     currentTime = time.time()
     elapsedTime = currentTime - lastTime
     lastTime = time.time()
-    outer_space.step(elapsedTime)        
-    inner_space.step(elapsedTime)        
+    outer_space.step(elapsedTime)
+    inner_space.step(elapsedTime)
 
     screen.fill((0, 0, 0))
     drawPymunkSegments(outer_block, screen)
@@ -65,22 +73,22 @@ while not done:
     # drawPolyRelativeToBody(inner_block_poly, outer_block, screen)
 
     keystate = pygame.key.get_pressed()
-    if keystate[pygame.K_LEFT]:    
+    if keystate[pygame.K_LEFT]:
         outer_block.apply_force_at_local_point((-20, 0), (0, 0))
-    if keystate[pygame.K_RIGHT]:    
+    if keystate[pygame.K_RIGHT]:
         outer_block.apply_force_at_local_point((20, 0), (0, 0))
-    if keystate[pygame.K_UP]:    
+    if keystate[pygame.K_UP]:
         outer_block.apply_force_at_local_point((0, 20), (0, 0))
-    if keystate[pygame.K_DOWN]:    
+    if keystate[pygame.K_DOWN]:
         outer_block.apply_force_at_local_point((0, -20), (0, 0))
 
-    if keystate[pygame.K_a]:    
+    if keystate[pygame.K_a]:
         inner_block.apply_force_at_local_point((-20, 0), (0, 0))
-    if keystate[pygame.K_d]:    
+    if keystate[pygame.K_d]:
         inner_block.apply_force_at_local_point((20, 0), (0, 0))
-    if keystate[pygame.K_w]:    
+    if keystate[pygame.K_w]:
         inner_block.apply_force_at_local_point((0, 20), (0, 0))
-    if keystate[pygame.K_s]:    
+    if keystate[pygame.K_s]:
         inner_block.apply_force_at_local_point((0, -20), (0, 0))
 
     for event in pygame.event.get():
@@ -89,5 +97,5 @@ while not done:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 print("Space pressed")
-                    
-    pygame.display.flip();
+
+    pygame.display.flip()

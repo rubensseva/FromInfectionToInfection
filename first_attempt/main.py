@@ -1,4 +1,4 @@
-import pymunk               # Import pymunk..
+import pymunk  # Import pymunk..
 import pygame
 import pygame.gfxdraw
 
@@ -38,8 +38,8 @@ left_wall_poly = pymunk.Poly.create_box(left_wall, (10, 400))
 space.add(left_wall, left_wall_poly)
 
 
-
 cells = []
+
 
 def createCell():
     # body = pymunk.Body(1, 1666)
@@ -49,46 +49,54 @@ def createCell():
     space.add(new_cell.shape.body, new_cell.shape)
     cells.append(new_cell)
 
+
 done = False
 
 
 def drawPymunkCircle(pymunk_circle):
     lineThickness = 1
     radius = 10
-    pygame.gfxdraw.circle(screen, int(pymunk_circle.shape.body.position.x), int(pymunk_circle.shape.body.position.y), int(pymunk_circle.shape.radius), (255, 255, 255))
+    pygame.gfxdraw.circle(
+        screen,
+        int(pymunk_circle.shape.body.position.x),
+        int(pymunk_circle.shape.body.position.y),
+        int(pymunk_circle.shape.radius),
+        (255, 255, 255),
+    )
+
 
 def drawPymunkPoly(pymunk_poly):
     lineThickness = 2
     points = []
     for v in pymunk_poly.get_vertices():
-        x,y = v.rotated(pymunk_poly.body.angle) + pymunk_poly.body.position
+        x, y = v.rotated(pymunk_poly.body.angle) + pymunk_poly.body.position
         points.append((int(x), int(y)))
     last_v = pymunk_poly.get_vertices()[0]
-    x,y = last_v.rotated(pymunk_poly.body.angle) + pymunk_poly.body.position
+    x, y = last_v.rotated(pymunk_poly.body.angle) + pymunk_poly.body.position
     points.append((int(x), int(y)))
     pygame.draw.lines(screen, (255, 255, 255), False, points, lineThickness)
 
 
 count = 0
 lastTime = time.time()
-while not done:         
+while not done:
     currentTime = time.time()
     elapsedTime = currentTime - lastTime
     lastTime = currentTime
     print(elapsedTime)
-    space.step(elapsedTime)        
+    space.step(elapsedTime)
     screen.fill((0, 0, 0))
     if count % 10 == 0:
-        print("tick");
+        print("tick")
         for cell in cells:
             cell.apply_rand_force()
-            if (cell.age > 100 and random.random() < 0.01):
+            if cell.age > 100 and random.random() < 0.01:
                 new_cell = cell.split()
                 space.add(new_cell.shape.body, new_cell.shape)
                 cells.append(new_cell)
 
     count += 1
-    for cell in cells: 
+    for cell in cells:
         cell.increment_age()
         drawPymunkCircle(cell)
 
@@ -97,19 +105,22 @@ while not done:
     drawPymunkPoly(roof_poly)
     drawPymunkPoly(left_wall_poly)
 
-    cells = list(filter(lambda cell: cell.shape.body.position.x < 800 and cell.shape.body.position.y < 800, cells))
+    cells = list(
+        filter(
+            lambda cell: cell.shape.body.position.x < 800
+            and cell.shape.body.position.y < 800,
+            cells,
+        )
+    )
 
     for event in pygame.event.get():
-            # only do something if the event is of type QUIT
-            if event.type == pygame.QUIT:
-                # change the value to False, to exit the main loop
-                done = True
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    print("Space pressed")
-                    createCell()
+        # only do something if the event is of type QUIT
+        if event.type == pygame.QUIT:
+            # change the value to False, to exit the main loop
+            done = True
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                print("Space pressed")
+                createCell()
 
-    pygame.display.flip();
-
-
-
+    pygame.display.flip()

@@ -1,4 +1,4 @@
-import pymunk               # Import pymunk..
+import pymunk  # Import pymunk..
 import pymunk.pygame_util
 import pygame
 import pygame.gfxdraw
@@ -54,6 +54,7 @@ for poly in snake.snake:
 
 cells = []
 
+
 def createCell():
     # body = pymunk.Body(1, 1666)
     # body.position = 400, 400
@@ -62,90 +63,104 @@ def createCell():
     space.add(new_cell.shape.body, new_cell.shape)
     cells.append(new_cell)
 
+
 done = False
 
 
 def drawPymunkCircle(pymunk_circle):
     lineThickness = 1
     radius = 10
-    pygame.gfxdraw.circle(screen, int(pymunk_circle.shape.body.position.x), int(pymunk_circle.shape.body.position.y), int(pymunk_circle.shape.radius), (255, 255, 255))
+    pygame.gfxdraw.circle(
+        screen,
+        int(pymunk_circle.shape.body.position.x),
+        int(pymunk_circle.shape.body.position.y),
+        int(pymunk_circle.shape.radius),
+        (255, 255, 255),
+    )
+
 
 def drawPymunkPoly(pymunk_poly):
     lineThickness = 2
     points = []
     for v in pymunk_poly.get_vertices():
-        x,y = v.rotated(pymunk_poly.body.angle) + pymunk_poly.body.position
+        x, y = v.rotated(pymunk_poly.body.angle) + pymunk_poly.body.position
         points.append((int(x), int(y)))
     last_v = pymunk_poly.get_vertices()[0]
-    x,y = last_v.rotated(pymunk_poly.body.angle) + pymunk_poly.body.position
+    x, y = last_v.rotated(pymunk_poly.body.angle) + pymunk_poly.body.position
     points.append((int(x), int(y)))
     pygame.draw.lines(screen, (255, 255, 255), False, points, lineThickness)
 
 
-
-
 count = 0
 lastTime = time.time()
-while not done:         
+while not done:
     currentTime = time.time()
     elapsedTime = currentTime - lastTime
     lastTime = time.time()
-    space.step(elapsedTime)        
+    space.step(elapsedTime)
 
     screen.fill((0, 0, 0))
     if count % 100 == 0:
-        print("tick");
+        print("tick")
     count += 1
 
     space.debug_draw(options)
 
-    cells = list(filter(lambda cell: cell.shape.body.position.x < 800 and cell.shape.body.position.y < 800, cells))
+    cells = list(
+        filter(
+            lambda cell: cell.shape.body.position.x < 800
+            and cell.shape.body.position.y < 800,
+            cells,
+        )
+    )
 
     for cell in cells:
         cell.apply_rand_force()
         cell.increment_age()
-        if (cell.age > 1000 and random.random() < 0.0001):
+        if cell.age > 1000 and random.random() < 0.0001:
             new_cell = cell.split()
             space.add(new_cell.shape.body, new_cell.shape)
             cells.append(new_cell)
-
 
     snake_rotation_force = 800
     snake_rotation_y_point = 20
     snake_move_force = 3000
     keystate = pygame.key.get_pressed()
     print(snake.head.body.angle)
-    if keystate[pygame.K_LEFT]:    
+    if keystate[pygame.K_LEFT]:
         print("applying force")
         head_body = snake.head.body
-        head_body.apply_force_at_local_point((-snake_rotation_force, 0), (0, snake_rotation_y_point))
-        head_body.apply_force_at_local_point((snake_rotation_force, 0), (0, -snake_rotation_y_point))
-    if keystate[pygame.K_RIGHT]:    
+        head_body.apply_force_at_local_point(
+            (-snake_rotation_force, 0), (0, snake_rotation_y_point)
+        )
+        head_body.apply_force_at_local_point(
+            (snake_rotation_force, 0), (0, -snake_rotation_y_point)
+        )
+    if keystate[pygame.K_RIGHT]:
         print("applying force")
         head_body = snake.head.body
-        head_body.apply_force_at_local_point((snake_rotation_force, 0), (0, snake_rotation_y_point))
-        head_body.apply_force_at_local_point((-snake_rotation_force, 0), (0, -snake_rotation_y_point))
-    if keystate[pygame.K_UP]:    
+        head_body.apply_force_at_local_point(
+            (snake_rotation_force, 0), (0, snake_rotation_y_point)
+        )
+        head_body.apply_force_at_local_point(
+            (-snake_rotation_force, 0), (0, -snake_rotation_y_point)
+        )
+    if keystate[pygame.K_UP]:
         print("applying force")
         head_body = snake.head.body
         head_body.apply_force_at_local_point((0, snake_move_force), (0, 0))
-    if keystate[pygame.K_DOWN]:    
+    if keystate[pygame.K_DOWN]:
         print("applying force")
         head_body = snake.head.body
         head_body.apply_force_at_local_point((0, -snake_move_force), (0, 0))
 
-
     for event in pygame.event.get():
-            # only do something if the event is of type QUIT
-            if event.type == pygame.QUIT:
-                # change the value to False, to exit the main loop
-                done = True
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    print("Space pressed")
-                    
+        # only do something if the event is of type QUIT
+        if event.type == pygame.QUIT:
+            # change the value to False, to exit the main loop
+            done = True
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                print("Space pressed")
 
-    pygame.display.flip();
-
-
-
+    pygame.display.flip()
