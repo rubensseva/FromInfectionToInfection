@@ -44,7 +44,7 @@ left_wall_poly = pymunk.Poly.create_box(left_wall, (10, 400))
 
 snake = Snake()
 
-for i in range(30):
+for i in range(1):
     constraint = snake.grow()
     space.add(constraint)
 
@@ -100,9 +100,6 @@ while not done:
     space.step(elapsedTime)
 
     screen.fill((0, 0, 0))
-    if count % 100 == 0:
-        print("tick")
-    count += 1
 
     space.debug_draw(options)
 
@@ -126,9 +123,7 @@ while not done:
     snake_rotation_y_point = 20
     snake_move_force = 3000
     keystate = pygame.key.get_pressed()
-    print(snake.head.body.angle)
     if keystate[pygame.K_LEFT]:
-        print("applying force")
         head_body = snake.head.body
         head_body.apply_force_at_local_point(
             (-snake_rotation_force, 0), (0, snake_rotation_y_point)
@@ -137,7 +132,6 @@ while not done:
             (snake_rotation_force, 0), (0, -snake_rotation_y_point)
         )
     if keystate[pygame.K_RIGHT]:
-        print("applying force")
         head_body = snake.head.body
         head_body.apply_force_at_local_point(
             (snake_rotation_force, 0), (0, snake_rotation_y_point)
@@ -146,11 +140,9 @@ while not done:
             (-snake_rotation_force, 0), (0, -snake_rotation_y_point)
         )
     if keystate[pygame.K_UP]:
-        print("applying force")
         head_body = snake.head.body
         head_body.apply_force_at_local_point((0, snake_move_force), (0, 0))
     if keystate[pygame.K_DOWN]:
-        print("applying force")
         head_body = snake.head.body
         head_body.apply_force_at_local_point((0, -snake_move_force), (0, 0))
 
@@ -162,5 +154,9 @@ while not done:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 print("Space pressed")
+                constraint = snake.grow()
+                space.add(constraint)
+                last_part = snake.snake[len(snake.snake) - 1 ]
+                space.add(last_part.body, last_part)
 
     pygame.display.flip()

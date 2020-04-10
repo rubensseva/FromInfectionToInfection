@@ -53,20 +53,3 @@ def drawPymunkSegments(body, screen):
         points.append((int(bx), int(by)))
     pygame.draw.lines(screen, (255, 255, 255), False, points, lineThickness)
 
-
-# def drawPolyRelativeToBody(polyToDraw, bodyAnchor, screen):
-#     height = screen.get_height()
-#     lineThickness = 2
-#     points = []
-#     for v in polyToDraw.get_vertices():
-#         body_position = polyToDraw.body.position
-#         body_anchor_position = bodyAnchor.position
-#         relative_position = v.rotated(polyToDraw.body.angle)
-#         x,y = pymunkToPygameCoords(relative_position + body_position + body_anchor_position, height)
-#         points.append((int(x), int(y)))
-#     last_v = polyToDraw.get_vertices()[0]
-#     body_position = polyToDraw.body.position
-#     relative_position = last_v.rotated(polyToDraw.body.angle)
-#     x,y = pymunkToPygameCoords(relative_position + body_position + body_anchor_position, height)
-#     points.append((int(x), int(y)))
-#     pygame.draw.lines(screen, (255, 255, 255), False, points, lineThickness)
