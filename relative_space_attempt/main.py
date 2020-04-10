@@ -57,6 +57,7 @@ while not done:
         outer_block.apply_force_at_local_point((0, 20), (0, 0))
     if keystate[pygame.K_DOWN]:    
         outer_block.apply_force_at_local_point((0, -20), (0, 0))
+
     if keystate[pygame.K_a]:    
         inner_block.apply_force_at_local_point((-20, 0), (0, 0))
     if keystate[pygame.K_d]:    
