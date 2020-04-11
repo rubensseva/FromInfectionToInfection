@@ -1,6 +1,7 @@
 import pymunk
 from pymunk.vec2d import Vec2d
 import random
+import math
 
 from Snake import Snake
 
@@ -26,20 +27,28 @@ class Cell:
         relative_boundary_body.position = 0, 0
 
         r = init_rad
-        segments_positions = [
-            [(r, 0), (r / 2, r / 2)],
-            [(r / 2, r / 2), (0, r)],
-            [(0, r), (-(r / 2), r / 2)],
-            [(-(r / 2), r / 2), (-r, 0)],
-            [(-r, 0), (-(r / 2), -(r / 2))],
-            [(-(r / 2), -(r / 2)), (0, -r)],
-            [(0, -r), (r / 2, -(r / 2))],
-            [(r / 2, -(r / 2)), (r, 0)],
-        ]
+
+        # sin(a) = opposite / hyp
+        # opposite = sin(a) * hyp
+        # opposite = y
+        # cos(a) = adj / hyp 
+        # adj = cos(a) * hyp
+        # adj = x
+        num_splits = 16                              # the resulting number of "pieces of cake
+        one_section = math.pi * 2 / num_splits      # math.pi * 2 is 360 deg in radians. Split this in equal parts
+        segments_positions = []
+        for i in range(num_splits):
+            current_section = i * one_section
+            next_section = (i + 1) * one_section
+            ax = math.cos(current_section) * r
+            ay = math.sin(current_section) * r
+            bx = math.cos(next_section) * r
+            by = math.sin(next_section) * r
+            segments_positions.append([(ax, ay), (bx, by)])
 
         segments = [
             pymunk.Segment(
-                relative_boundary_body, segment_positions[0], segment_positions[1], 1
+                relative_boundary_body, segment_positions[0], segment_positions[1], 5
             )
             for segment_positions in segments_positions
         ]
