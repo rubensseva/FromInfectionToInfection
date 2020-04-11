@@ -156,7 +156,7 @@ while not done:
                 print("Space pressed")
                 constraint = snake.grow()
                 space.add(constraint)
-                last_part = snake.snake[len(snake.snake) - 1 ]
+                last_part = snake.snake[len(snake.snake) - 1]
                 space.add(last_part.body, last_part)
 
     pygame.display.flip()

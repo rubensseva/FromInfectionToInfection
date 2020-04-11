@@ -39,9 +39,12 @@ class Snake:
 
         self.time_of_last_turn = time.time() - 10000
         self.move_state = "FORWARD"
-        self.move_dict = {"FORWARD": self.moveForward, "LEFT": self.moveLeft, "RIGHT": self.moveRight}
+        self.move_dict = {
+            "FORWARD": self.moveForward,
+            "LEFT": self.moveLeft,
+            "RIGHT": self.moveRight,
+        }
         self.change_dir_ask()
-
 
     def getLastBlock(self):
         return self.snake[len(self.snake) - 1]
@@ -63,14 +66,14 @@ class Snake:
 
     def change_dir_ask(self):
         current_time = time.time()
-        if (current_time - self.time_of_last_turn < 1):
+        if current_time - self.time_of_last_turn < 1:
             return
         rand = random.random()
-        if (rand < 0.33):
+        if rand < 0.33:
             self.move_state = "FORWARD"
-        elif (rand < 0.66):
+        elif rand < 0.66:
             self.move_state = "LEFT"
-        else: 
+        else:
             self.move_state = "RIGHT"
         self.time_of_last_turn = time.time()
 

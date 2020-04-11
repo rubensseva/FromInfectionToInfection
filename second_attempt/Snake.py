@@ -1,5 +1,5 @@
 import pymunk
-from pymunk.vec2d  import Vec2d
+from pymunk.vec2d import Vec2d
 
 
 init_mass = 1
@@ -7,7 +7,6 @@ init_moment = 100
 
 head_init_mass = 100
 head_init_moment = 10000
-
 
 
 # When changing height, should also change pivot joint pos
@@ -42,5 +41,7 @@ class Snake:
         new_body.position = last_body.position + last_body_end_position
         new_poly = pymunk.Poly.create_box(new_body, (init_width, init_height))
         self.snake.append(new_poly)
-        c = pymunk.PivotJoint(new_body, last_body, (0, pivot_joint_pos), (0, -pivot_joint_pos))
+        c = pymunk.PivotJoint(
+            new_body, last_body, (0, pivot_joint_pos), (0, -pivot_joint_pos)
+        )
         return c

@@ -31,11 +31,13 @@ class Cell:
         # sin(a) = opposite / hyp
         # opposite = sin(a) * hyp
         # opposite = y
-        # cos(a) = adj / hyp 
+        # cos(a) = adj / hyp
         # adj = cos(a) * hyp
         # adj = x
-        num_splits = 16                              # the resulting number of "pieces of cake
-        one_section = math.pi * 2 / num_splits      # math.pi * 2 is 360 deg in radians. Split this in equal parts
+        num_splits = 16  # the resulting number of "pieces of cake
+        one_section = (
+            math.pi * 2 / num_splits
+        )  # math.pi * 2 is 360 deg in radians. Split this in equal parts
         segments_positions = []
         for i in range(num_splits):
             current_section = i * one_section
@@ -101,9 +103,5 @@ class Cell:
         # Move snakes
         for snake in self.snakes:
             snake.move()
-            if (random.random() < 0.1):
+            if random.random() < 0.1:
                 snake.change_dir_ask()
-            
-            
-
-
