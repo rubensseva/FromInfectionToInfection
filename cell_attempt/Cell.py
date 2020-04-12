@@ -50,7 +50,8 @@ class Cell:
         objects = [relative_boundary_body] + segments
         self.relative_space.add(objects)
 
-        self.snakes = []
+        self.mitochondria = []
+        self.ATP = []
 
     def apply_rand_force(self):
         rand_x = (0.5 - random.random()) * 5
@@ -68,22 +69,24 @@ class Cell:
     def increment_age(self):
         self.age += 1
 
-    def addSnake(self):
+    def addMitochondrion(self):
         rand_x = random.uniform(-init_rad / 4, init_rad / 4)
         rand_y = random.uniform(-init_rad / 4, init_rad / 4)
         rand_angle = random.uniform(-3.0, 3.0)
-        snake = Mitochondrion(
+        mitochondrion = Mitochondrion(
             self, init_position=Vec2d(rand_x, rand_y), init_angle=rand_angle
         )
-        for poly in snake.snake:
+        for poly in mitochondrion.snake:
             self.relative_space.add(poly.body, poly)
-        self.snakes.append(snake)
+        self.mitochondria.append(mitochondrion)
 
     def timeStep(self):
-        # Create new snakes
+        # Create new mitochondria
         if random.random() < 0.01:
-            self.addSnake()
+            self.addMitochondrion()
 
-        # Grow snakes
-        for snake in self.snakes:
-            snake.timeStep()
+        # Grow mitochondria
+        for mitochondrion in self.mitochondria:
+            mitochondrion.timeStep()
+        for ATP in self.ATP:
+            ATP.timeStep()

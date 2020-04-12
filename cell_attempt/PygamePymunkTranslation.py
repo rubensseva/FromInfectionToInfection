@@ -8,11 +8,11 @@ def pymunkToPygameCoords(vector, displayHeight):
     return vector
 
 
-def drawPymunkCircle(pymunk_circle, screen):
+def drawPymunkCircle(pymunk_circle, screen, relativeTo=Vec2d(0.0, 0.0)):
     height = screen.get_height()
     lineThickness = 1
     radius = 10
-    x, y = pymunkToPygameCoords(pymunk_circle.body.position, height)
+    x, y = pymunkToPygameCoords(pymunk_circle.body.position + relativeTo, height)
     pygame.gfxdraw.circle(
         screen, int(x), int(y), int(pymunk_circle.radius), (255, 255, 255)
     )

@@ -70,9 +70,11 @@ while not done:
         drawPymunkCircle(cell.shape, screen)
 
     for cell in cells:
-        for snake in cell.snakes:
-            for snake_part in snake.snake:
+        for mitochondrion in cell.mitochondria:
+            for snake_part in mitochondrion.snake:
                 drawPymunkPoly(snake_part, screen, relativeTo=cell.shape.body.position)
+        for ATP in cell.ATP:
+            drawPymunkCircle(ATP.shape, screen, relativeTo=cell.shape.body.position)
 
     for cell in cells:
         if random.random() < 0.1:
