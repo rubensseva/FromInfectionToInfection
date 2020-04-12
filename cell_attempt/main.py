@@ -75,10 +75,17 @@ while not done:
                 drawPymunkPoly(snake_part, screen, relativeTo=cell.shape.body.position)
         for ATP in cell.ATP:
             drawPymunkCircle(ATP.shape, screen, relativeTo=cell.shape.body.position)
+        drawPymunkCircle(cell.nucleus.shape, screen, relativeTo=cell.shape.body.position)
+
 
     for cell in cells:
         if random.random() < 0.1:
             cell.timeStep()
+    for cell in cells:
+        new_cell = cell.splitCheck()
+        if (new_cell != None):
+            cells.append(new_cell)
+            space.add(new_cell.shape.body, new_cell.shape)
 
     # drawPymunkPoly(inner_block_poly, screen, relativeTo=outer_block.position)
     # drawPolyRelativeToBody(inner_block_poly, outer_block, screen)

@@ -11,8 +11,8 @@ init_angle_default = 0.0
 init_mass_default = 10
 init_moment_default = 100
 
-head_init_mass_default = 10000
-head_init_moment_default = 100000
+head_init_mass_default = 10
+head_init_moment_default = 1000
 
 init_width_default = 5
 init_height_default = 10
@@ -22,7 +22,7 @@ pivot_joint_pos_default = 7
 
 snake_rotation_force_default = 70
 snake_rotation_y_point_default = 20
-snake_move_force_default = 5000
+snake_move_force_default = 5
 
 
 class Snake:
