@@ -3,7 +3,7 @@ from pymunk.vec2d import Vec2d
 import random
 import math
 
-from Snake import Snake
+from CellComponent.Mitochondrion import Mitochondrion
 
 
 init_x, init_y = 400, 400
@@ -29,9 +29,7 @@ class Cell:
         r = init_rad
 
         num_splits = 16  # the resulting number of "pieces of cake
-        one_section = (
-            math.pi * 2 / num_splits
-        )
+        one_section = math.pi * 2 / num_splits
         segments_positions = []
         for i in range(num_splits):
             current_section = i * one_section
@@ -74,7 +72,9 @@ class Cell:
         rand_x = random.uniform(-init_rad / 4, init_rad / 4)
         rand_y = random.uniform(-init_rad / 4, init_rad / 4)
         rand_angle = random.uniform(-3.0, 3.0)
-        snake = Snake(init_position=Vec2d(rand_x, rand_y), init_angle=rand_angle)
+        snake = Mitochondrion(
+            self, init_position=Vec2d(rand_x, rand_y), init_angle=rand_angle
+        )
         for poly in snake.snake:
             self.relative_space.add(poly.body, poly)
         self.snakes.append(snake)
@@ -86,16 +86,4 @@ class Cell:
 
         # Grow snakes
         for snake in self.snakes:
-            if (
-                len(snake.snake) < 5 and random.random() < 0.01
-            ) or random.random() < 0.0001:
-                constraint = snake.grow()
-                new_snake_part = snake.getLastBlock()
-                self.relative_space.add(new_snake_part.body, new_snake_part)
-                self.relative_space.add(constraint)
-
-        # Move snakes
-        for snake in self.snakes:
-            snake.move()
-            if random.random() < 0.1:
-                snake.change_dir_ask()
+            snake.timeStep()
