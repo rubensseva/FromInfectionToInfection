@@ -15,7 +15,7 @@ init_rad = 50
 init_num_ATP_default = 3
 init_num_mitochondria_default = 0
 
-# This should probably be held at one for simplicity, rather 
+# This should probably be held at one for simplicity, rather
 # change how the radius is changed in relation to it
 growth_per_atp = 1
 
@@ -27,8 +27,15 @@ shrink_cooldown_time = 0.001
 
 mitochondria_limit = 4
 
+
 class Cell:
-    def __init__(self, x=init_x, y=init_y, init_num_ATP =init_num_ATP_default, init_num_mitochondria=init_num_mitochondria_default):
+    def __init__(
+        self,
+        x=init_x,
+        y=init_y,
+        init_num_ATP=init_num_ATP_default,
+        init_num_mitochondria=init_num_mitochondria_default,
+    ):
         init_mass = 1
         init_moment = 1666
         body = pymunk.Body(init_mass, init_moment)
@@ -54,7 +61,10 @@ class Cell:
         segments_positions = self.approximate_circle(init_rad)
         segments = [
             pymunk.Segment(
-                self.relative_boundary_body, segment_positions[0], segment_positions[1], 30
+                self.relative_boundary_body,
+                segment_positions[0],
+                segment_positions[1],
+                30,
             )
             for segment_positions in segments_positions
         ]
@@ -67,7 +77,6 @@ class Cell:
         for i in range(init_num_mitochondria):
             self.createMitochondrion()
 
-
         self.ATP = []
         for i in range(init_num_ATP):
             self.createATP()
@@ -77,9 +86,8 @@ class Cell:
         self.nucleus = Nucleus(self, init_position=Vec2d(rand_x, rand_y))
         self.relative_space.add(self.nucleus.shape, self.nucleus.shape.body)
 
-
     def createATP(self, init_position=None):
-        if (init_position == None):
+        if init_position == None:
             rand_x = random.uniform(-init_rad / 4, init_rad / 4)
             rand_y = random.uniform(-init_rad / 4, init_rad / 4)
             init_position = Vec2d(rand_x, rand_y)
@@ -102,9 +110,11 @@ class Cell:
             segments_positions.append([(ax, ay), (bx, by)])
         return segments_positions
 
-
     def shrinkCheck(self):
-        if (self.growth_penalty_length > 0 and time.time() - self.last_shrink_time > shrink_cooldown_time):
+        if (
+            self.growth_penalty_length > 0
+            and time.time() - self.last_shrink_time > shrink_cooldown_time
+        ):
             self.shrink()
             self.growth_penalty_length -= 1
             self.last_shrink_time = time.time()
@@ -123,7 +133,10 @@ class Cell:
         segments_positions = self.approximate_circle(new_radius)
         segments = [
             pymunk.Segment(
-                self.relative_boundary_body, segment_positions[0], segment_positions[1], 5
+                self.relative_boundary_body,
+                segment_positions[0],
+                segment_positions[1],
+                5,
             )
             for segment_positions in segments_positions
         ]
@@ -132,7 +145,9 @@ class Cell:
         self.relative_space.add(objects)
 
     def growCheck(self):
-        if (len(self.ATP) > 0 and (time.time() - self.last_growth_time >= growth_cooldown_time)):
+        if len(self.ATP) > 0 and (
+            time.time() - self.last_growth_time >= growth_cooldown_time
+        ):
             self.grow()
 
     def grow(self):
@@ -151,7 +166,10 @@ class Cell:
         segments_positions = self.approximate_circle(new_radius)
         segments = [
             pymunk.Segment(
-                self.relative_boundary_body, segment_positions[0], segment_positions[1], 5
+                self.relative_boundary_body,
+                segment_positions[0],
+                segment_positions[1],
+                5,
             )
             for segment_positions in segments_positions
         ]
@@ -160,14 +178,16 @@ class Cell:
         self.relative_space.add(objects)
         print("Cell growing, growth is now: " + str(self.growth))
 
-
     def apply_rand_force(self):
         rand_x = (0.5 - random.random()) * 5
         rand_y = (0.5 - random.random()) * 5
         self.shape.body.apply_impulse_at_local_point((rand_x, rand_y), point=(0, 0))
 
     def splitCheck(self):
-        if (self.growth > 40 and time.time() - self.last_split_time > split_cooldown_time):
+        if (
+            self.growth > 40
+            and time.time() - self.last_split_time > split_cooldown_time
+        ):
             self.last_split_time = time.time()
             return self.split()
         return None
@@ -192,12 +212,17 @@ class Cell:
         self.growth_penalty_length = self.growth
 
         return Cell(
-            self.shape.body.position.x + rand_x, self.shape.body.position.y + rand_y, init_num_ATP=len(transferred_atp), init_num_mitochondria=len(transferred_mitochondria)
+            self.shape.body.position.x + rand_x,
+            self.shape.body.position.y + rand_y,
+            init_num_ATP=len(transferred_atp),
+            init_num_mitochondria=len(transferred_mitochondria),
         )
 
-
     def createMitochondrionCheck(self):
-        if(self.growth / (len(self.mitochondria) + 0.001) > 10 and random.random() < 0.01):
+        if (
+            self.growth / (len(self.mitochondria) + 0.001) > 10
+            and random.random() < 0.01
+        ):
             self.createMitochondrion()
 
     def createMitochondrion(self):
@@ -212,19 +237,19 @@ class Cell:
         self.mitochondria.append(mitochondrion)
 
     def isWithinCircle(self, position):
-        return position.x**2 + position.y**2 < self.radius**2
+        return position.x ** 2 + position.y ** 2 < self.radius ** 2
 
     def removeLostComponents(self):
         temp_indexes = []
         for i in range(len(self.ATP)):
-            if (not self.isWithinCircle(self.ATP[i].shape.body.position)):
+            if not self.isWithinCircle(self.ATP[i].shape.body.position):
                 temp_indexes.append(i)
         for index in sorted(temp_indexes, reverse=True):
             print("removing atp since out of bounds")
             del self.ATP[index]
         temp_indexes = []
         for i in range(len(self.mitochondria)):
-            if (not self.isWithinCircle(self.mitochondria[i].head.body.position)):
+            if not self.isWithinCircle(self.mitochondria[i].head.body.position):
                 temp_indexes.append(i)
         for index in sorted(temp_indexes, reverse=True):
             print("removing mito since out of bounds")

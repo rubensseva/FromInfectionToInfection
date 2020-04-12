@@ -23,7 +23,7 @@ class Mitochondrion(Snake):
             head_init_height=10,
             pivot_joint_pos=5,
             snake_move_force=100,
-            snake_rotation_force=10
+            snake_rotation_force=10,
         )
         self.parentCell = parentCell
 
