@@ -8,11 +8,13 @@ from CellComponent.Mitochondrion import Mitochondrion
 from CellComponent.Nucleus import Nucleus
 from CellComponent.ATP import ATP
 
+from infection_utils import approximate_circle, is_within_circle, convert_points_to_pymunk_segments
+
 
 init_x, init_y = 400, 400
 init_rad = 50
 
-init_num_ATP_default = 3
+init_num_ATP_default = 7
 init_num_mitochondria_default = 0
 
 # This should probably be held at one for simplicity, rather
@@ -21,11 +23,14 @@ growth_per_atp = 1
 
 growth_cooldown_time = 0.5
 
+split_growth_target_max = 200
+split_growth_target_min = 30
 split_cooldown_time = 5
 
 shrink_cooldown_time = 0.001
 
 mitochondria_limit = 4
+
 
 
 class Cell:
@@ -36,6 +41,15 @@ class Cell:
         init_num_ATP=init_num_ATP_default,
         init_num_mitochondria=init_num_mitochondria_default,
     ):
+        self.ATP_reservoir_states = {
+                "EMPTY": 0,
+                "STARVING": 5,
+                "LOW": 15,
+                "MEDIUM": 30,
+                "HIGH": 60,
+                "ABUNDANT": 200
+        }
+
         init_mass = 1
         init_moment = 1666
         body = pymunk.Body(init_mass, init_moment)
@@ -51,6 +65,7 @@ class Cell:
         self.last_shrink_time = self.birth_time
 
         self.growth = 0
+        self.old_growth = self.growth
 
         self.growth_penalty_length = 0
 
@@ -58,19 +73,11 @@ class Cell:
         self.relative_boundary_body.position = 0, 0
 
         self.radius = init_rad
-        segments_positions = self.approximate_circle(init_rad)
-        segments = [
-            pymunk.Segment(
-                self.relative_boundary_body,
-                segment_positions[0],
-                segment_positions[1],
-                30,
-            )
-            for segment_positions in segments_positions
-        ]
-        self.segments = segments
+        self.old_radius = self.radius
+        segments_positions = approximate_circle(init_rad, 16)
+        self.segments = convert_points_to_pymunk_segments(self.relative_boundary_body, segments_positions)
 
-        objects = [self.relative_boundary_body] + segments
+        objects = [self.relative_boundary_body] + self.segments
         self.relative_space.add(objects)
 
         self.mitochondria = []
@@ -86,6 +93,23 @@ class Cell:
         self.nucleus = Nucleus(self, init_position=Vec2d(rand_x, rand_y))
         self.relative_space.add(self.nucleus.shape, self.nucleus.shape.body)
 
+        self.update_split_growth_target()
+        
+
+    def update_split_growth_target(self):
+        self.split_growth_target = random.randint(split_growth_target_min, split_growth_target_max)
+
+    def apply_rand_force(self):
+        rand_x = (0.5 - random.random()) * 5
+        rand_y = (0.5 - random.random()) * 5
+        self.shape.body.apply_impulse_at_local_point((rand_x, rand_y), point=(0, 0))
+
+    def query_ATP_reservoir(self, query_string):
+        ATP_limit = self.ATP_reservoir_states[query_string]
+        print(ATP_limit)
+        num_ATP = len(self.ATP)
+        return num_ATP >= ATP_limit
+
     def createATP(self, init_position=None):
         if init_position == None:
             rand_x = random.uniform(-init_rad / 4, init_rad / 4)
@@ -94,21 +118,6 @@ class Cell:
         new_ATP = ATP(self, init_position)
         self.ATP.append(new_ATP)
         self.relative_space.add(new_ATP.shape.body, new_ATP.shape)
-
-    def approximate_circle(self, radius):
-        r = radius
-        num_splits = 16  # the resulting number of "pieces of cake
-        one_section = math.pi * 2 / num_splits
-        segments_positions = []
-        for i in range(num_splits):
-            current_section = i * one_section
-            next_section = (i + 1) * one_section
-            ax = math.cos(current_section) * r
-            ay = math.sin(current_section) * r
-            bx = math.cos(next_section) * r
-            by = math.sin(next_section) * r
-            segments_positions.append([(ax, ay), (bx, by)])
-        return segments_positions
 
     def shrinkCheck(self):
         if (
@@ -120,32 +129,10 @@ class Cell:
             self.last_shrink_time = time.time()
 
     def shrink(self):
-        print("shrinking")
         self.growth -= 1
-        new_radius = init_rad + (self.growth / 1)
-        # Set global space shape
-        self.shape.unsafe_set_radius(new_radius)
-        self.radius = new_radius
-
-        # Remove the old objects from relative space
-        self.relative_space.remove(self.segments)
-        # Set relative space shape
-        segments_positions = self.approximate_circle(new_radius)
-        segments = [
-            pymunk.Segment(
-                self.relative_boundary_body,
-                segment_positions[0],
-                segment_positions[1],
-                5,
-            )
-            for segment_positions in segments_positions
-        ]
-        self.segments = segments
-        objects = segments
-        self.relative_space.add(objects)
 
     def growCheck(self):
-        if len(self.ATP) > 0 and (
+        if self.query_ATP_reservoir("MEDIUM") and (
             time.time() - self.last_growth_time >= growth_cooldown_time
         ):
             self.grow()
@@ -154,46 +141,18 @@ class Cell:
         self.last_growth_time = time.time()
         self.ATP.pop(len(self.ATP) - 1)
         self.growth += 1
-        new_radius = init_rad + (self.growth / 1)
-
-        # Set global space shape
-        self.shape.unsafe_set_radius(new_radius)
-        self.radius = new_radius
-
-        # Remove the old objects from relative space
-        self.relative_space.remove(self.segments)
-        # Set relative space shape
-        segments_positions = self.approximate_circle(new_radius)
-        segments = [
-            pymunk.Segment(
-                self.relative_boundary_body,
-                segment_positions[0],
-                segment_positions[1],
-                5,
-            )
-            for segment_positions in segments_positions
-        ]
-        self.segments = segments
-        objects = segments
-        self.relative_space.add(objects)
-        print("Cell growing, growth is now: " + str(self.growth))
-
-    def apply_rand_force(self):
-        rand_x = (0.5 - random.random()) * 5
-        rand_y = (0.5 - random.random()) * 5
-        self.shape.body.apply_impulse_at_local_point((rand_x, rand_y), point=(0, 0))
 
     def splitCheck(self):
         if (
-            self.growth > 40
+            self.growth > self.split_growth_target
             and time.time() - self.last_split_time > split_cooldown_time
         ):
             self.last_split_time = time.time()
+            self.update_split_growth_target()
             return self.split()
         return None
 
     def split(self):
-        print("splitting")
         rand_x = (0.5 - random.random()) / 10
         rand_y = (0.5 - random.random()) / 10
 
@@ -208,7 +167,6 @@ class Cell:
         self.ATP = remaining_atp
         self.mitochondria = remaining_mitochondria
 
-        # self.growth = self.growth // 2
         self.growth_penalty_length = self.growth
 
         return Cell(
@@ -219,11 +177,19 @@ class Cell:
         )
 
     def createMitochondrionCheck(self):
+        ATP_cost = 5 * (len(self.mitochondria) ** 4)
         if (
-            self.growth / (len(self.mitochondria) + 0.001) > 10
-            and random.random() < 0.01
+            self.query_ATP_reservoir("STARVING") 
+            and len(self.ATP) > ATP_cost
         ):
             self.createMitochondrion()
+            split_index = len(self.ATP) - 1 - ATP_cost
+            remaining_ATP = self.ATP[:split_index]
+            spent_ATP = self.ATP[split_index:]
+            for ATP in spent_ATP: 
+                self.relative_space.remove(ATP.shape)
+                self.relative_space.remove(ATP.shape.body)
+            self.ATP = remaining_ATP
 
     def createMitochondrion(self):
         rand_x = random.uniform(-init_rad / 4, init_rad / 4)
@@ -236,24 +202,39 @@ class Cell:
             self.relative_space.add(poly.body, poly)
         self.mitochondria.append(mitochondrion)
 
-    def isWithinCircle(self, position):
-        return position.x ** 2 + position.y ** 2 < self.radius ** 2
 
     def removeLostComponents(self):
         temp_indexes = []
         for i in range(len(self.ATP)):
-            if not self.isWithinCircle(self.ATP[i].shape.body.position):
+            if not is_within_circle(self.radius, self.ATP[i].shape.body.position):
                 temp_indexes.append(i)
         for index in sorted(temp_indexes, reverse=True):
             print("removing atp since out of bounds")
             del self.ATP[index]
         temp_indexes = []
         for i in range(len(self.mitochondria)):
-            if not self.isWithinCircle(self.mitochondria[i].head.body.position):
+            if not is_within_circle(self.radius, self.mitochondria[i].head.body.position):
                 temp_indexes.append(i)
         for index in sorted(temp_indexes, reverse=True):
             print("removing mito since out of bounds")
             del self.mitochondria[index]
+
+    def updateSimulationComponentsCheck(self):
+        if (self.old_growth != self.growth):
+            self.updateSimulationComponents()
+            self.old_growth = self.growth
+
+    def updateSimulationComponents(self):
+        new_radius = init_rad + (self.growth / 1)
+        # Set global space shape
+        self.shape.unsafe_set_radius(new_radius)
+        self.radius = new_radius
+        # Remove the old objects from relative space
+        self.relative_space.remove(self.segments)
+        # Set relative space shape
+        segments_positions = approximate_circle(new_radius, 16)
+        self.segments = convert_points_to_pymunk_segments(self.relative_boundary_body, segments_positions)
+        self.relative_space.add(self.segments)
 
     def timeStep(self):
         self.removeLostComponents()
@@ -271,3 +252,5 @@ class Cell:
             ATP.timeStep()
         # Simulate nucleus
         self.nucleus.timeStep()
+        # Update cell radius for all relevant components
+        self.updateSimulationComponentsCheck()

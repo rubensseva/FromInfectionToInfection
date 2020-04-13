@@ -52,3 +52,4 @@ def drawPymunkSegments(body, screen):
         points.append((int(ax), int(ay)))
         points.append((int(bx), int(by)))
     pygame.draw.lines(screen, (255, 255, 255), False, points, lineThickness)
+
