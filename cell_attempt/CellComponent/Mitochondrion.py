@@ -7,6 +7,9 @@ import time
 from Snake import Snake
 from CellComponent.ATP import ATP
 
+grow_cooldown_time = 1
+create_ATP_cooldown_time = 2
+
 
 class Mitochondrion(Snake):
     def __init__(self, parentCell, init_position=Vec2d(0.0, 0.0), init_angle=0.0):
@@ -21,23 +24,37 @@ class Mitochondrion(Snake):
             init_height=10,
             head_init_width=5,
             head_init_height=10,
-            pivot_joint_pos=5,
-            snake_move_force=100,
-            snake_rotation_force=10,
+            pivot_joint_pos=6,
+            snake_move_force=15,
+            snake_rotation_force=1,
         )
         self.parentCell = parentCell
+        self.birth_time = time.time()
+        self.last_grow_time = self.birth_time
+        self.last_create_ATP_time = self.birth_time
 
-    def timeStep(self):
+    def time_step(self):
         # Grow
-        if (len(self.snake) < 2 and random.random() < 0.01) or random.random() < 0.0001:
+        current_time = time.time()
+        if (
+            current_time - self.last_grow_time > grow_cooldown_time
+            and len(self.snake) < 2
+            and random.random() < 0.01
+        ) or random.random() < 0.0001:
             constraint = self.grow()
             new_snake_part = self.getLastBlock()
             self.parentCell.relative_space.add(new_snake_part.body, new_snake_part)
             self.parentCell.relative_space.add(constraint)
+            self.last_grow_time = time.time()
 
         # Create ATP
-        if random.random() < 0.05:
-            self.parentCell.createATP(init_position=self.head.body.position)
+        current_time = time.time()
+        if (
+            current_time - self.last_create_ATP_time > create_ATP_cooldown_time
+            and random.random() < 0.05
+        ):
+            self.parentCell.create_ATP(init_position=self.head.body.position)
+            self.last_create_ATP_time = time.time()
 
         # Move
         self.move()

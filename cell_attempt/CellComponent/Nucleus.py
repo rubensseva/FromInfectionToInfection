@@ -14,12 +14,12 @@ class Nucleus(Blob):
             init_mass=10000,
             init_moment=1000000,
             init_radius=20,
-            move_force=100,
+            move_force=500,
             growth_factor=1,
         )
         self.parentCell = parentCell
 
-    def timeStep(self):
+    def time_step(self):
         self.move()
         if random.random() < 0.1:
             self.change_dir_ask()

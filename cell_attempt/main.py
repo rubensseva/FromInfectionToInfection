@@ -55,13 +55,8 @@ while not done:
     screen.fill((0, 0, 0))
     currentTime = time.time()
     elapsedTime = currentTime - lastTime
+    lastTime = currentTime
     space.step(elapsedTime)
-
-    for cell in cells:
-        currentTime = time.time()
-        elapsedTime = currentTime - lastTime
-        cell.relative_space.step(elapsedTime)
-    lastTime = time.time()
 
     for cell in cells:
         cell.apply_rand_force()
@@ -80,10 +75,9 @@ while not done:
         )
 
     for cell in cells:
-        if random.random() < 0.1:
-            cell.timeStep()
+        cell.time_step()
     for cell in cells:
-        new_cell = cell.splitCheck()
+        new_cell = cell.split_check()
         if new_cell != None:
             cells.append(new_cell)
             space.add(new_cell.shape.body, new_cell.shape)

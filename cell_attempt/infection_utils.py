@@ -1,6 +1,7 @@
 import math
 import pymunk
 
+
 def approximate_circle(radius, num_splits):
     r = radius
     one_section = math.pi * 2 / num_splits
@@ -19,13 +20,9 @@ def approximate_circle(radius, num_splits):
 def is_within_circle(radius, position):
     return position.x ** 2 + position.y ** 2 < radius ** 2
 
+
 def convert_points_to_pymunk_segments(body, segments_positions, radius=5):
     return [
-        pymunk.Segment(
-            body,
-            segment_positions[0],
-            segment_positions[1],
-            radius,
-        )
+        pymunk.Segment(body, segment_positions[0], segment_positions[1], radius,)
         for segment_positions in segments_positions
     ]
