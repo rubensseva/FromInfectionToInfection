@@ -8,7 +8,7 @@ import pygame.transform
 import random
 import time
 
-from pygame_pymunk_translation import drawPymunkCircle, drawPymunkSegments, drawPymunkPoly
+from pygame_pymunk_translation import draw_pymunk_circle, draw_pymunk_segments, draw_pymunk_poly
 from cell import Cell
 
 pygame.init()
@@ -65,14 +65,14 @@ while not done:
         cell.apply_rand_force()
 
     for cell in cells:
-        drawPymunkCircle(
+        draw_pymunk_circle(
             cell.shape, screen, scale=cameraZoom, cameraPosition=cameraPosition
         )
 
     for cell in cells:
         for mitochondrion in cell.mitochondria:
             for snake_part in mitochondrion.snake:
-                drawPymunkPoly(
+                draw_pymunk_poly(
                     snake_part,
                     screen,
                     relativeTo=cell.shape.body.position,
@@ -80,14 +80,14 @@ while not done:
                     cameraPosition=cameraPosition,
                 )
         for ATP in cell.ATP:
-            drawPymunkCircle(
+            draw_pymunk_circle(
                 ATP.shape,
                 screen,
                 relativeTo=cell.shape.body.position,
                 scale=cameraZoom,
                 cameraPosition=cameraPosition,
             )
-        drawPymunkCircle(
+        draw_pymunk_circle(
             cell.nucleus.shape,
             screen,
             relativeTo=cell.shape.body.position,
