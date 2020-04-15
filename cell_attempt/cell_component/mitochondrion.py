@@ -4,8 +4,8 @@ from pymunk.vec2d import Vec2d
 import random
 import time
 
-from Snake import Snake
-from CellComponent.ATP import ATP
+from snake import Snake
+from cell_component.atp import ATP
 
 grow_cooldown_time = 1
 create_ATP_cooldown_time = 2

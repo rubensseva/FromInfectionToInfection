@@ -4,7 +4,7 @@ from pymunk.vec2d import Vec2d
 import random
 import time
 
-from Blob import Blob
+from blob import Blob
 
 
 class ATP(Blob):

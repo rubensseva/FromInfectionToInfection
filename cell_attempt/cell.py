@@ -4,9 +4,9 @@ import random
 import math
 import time
 
-from CellComponent.Mitochondrion import Mitochondrion
-from CellComponent.Nucleus import Nucleus
-from CellComponent.ATP import ATP
+from cell_component.mitochondrion import Mitochondrion
+from cell_component.nucleus import Nucleus
+from cell_component.atp import ATP
 
 from infection_utils import (
     approximate_circle,

@@ -8,8 +8,8 @@ import pygame.transform
 import random
 import time
 
-from PygamePymunkTranslation import drawPymunkCircle, drawPymunkSegments, drawPymunkPoly
-from Cell import Cell
+from pygame_pymunk_translation import drawPymunkCircle, drawPymunkSegments, drawPymunkPoly
+from cell import Cell
 
 pygame.init()
 
