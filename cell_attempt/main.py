@@ -1,4 +1,5 @@
-import pymunk  # Import pymunk..
+import pymunk
+from pymunk.vec2d import Vec2d
 import pymunk.pygame_util
 import pygame
 import pygame.gfxdraw
@@ -24,22 +25,22 @@ space.damping = 0.7
 floor = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
 floor.position = width / 2, 0
 floor_poly = pymunk.Poly.create_box(floor, (width, 10))
-space.add(floor, floor_poly)
+# space.add(floor, floor_poly)
 
 right_wall = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
 right_wall.position = width, height / 2
 right_wall_poly = pymunk.Poly.create_box(right_wall, (10, height))
-space.add(right_wall, right_wall_poly)
+# space.add(right_wall, right_wall_poly)
 
 roof = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
 roof.position = width / 2, height
 roof_poly = pymunk.Poly.create_box(roof, (width, 10))
-space.add(roof, roof_poly)
+# space.add(roof, roof_poly)
 
 left_wall = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
 left_wall.position = 0, height / 2
 left_wall_poly = pymunk.Poly.create_box(left_wall, (10, height))
-space.add(left_wall, left_wall_poly)
+# space.add(left_wall, left_wall_poly)
 
 first_cell = Cell()
 
@@ -47,6 +48,8 @@ cells = [first_cell]
 
 space.add(first_cell.shape.body, first_cell.shape)
 
+cameraZoom = 0
+cameraPosition = Vec2d(0, 0)
 
 count = 0
 lastTime = time.time()
@@ -62,16 +65,16 @@ while not done:
         cell.apply_rand_force()
 
     for cell in cells:
-        drawPymunkCircle(cell.shape, screen)
+        drawPymunkCircle(cell.shape, screen, scale=cameraZoom, cameraPosition=cameraPosition)
 
     for cell in cells:
         for mitochondrion in cell.mitochondria:
             for snake_part in mitochondrion.snake:
-                drawPymunkPoly(snake_part, screen, relativeTo=cell.shape.body.position)
+                drawPymunkPoly(snake_part, screen, relativeTo=cell.shape.body.position, scale=cameraZoom, cameraPosition=cameraPosition)
         for ATP in cell.ATP:
-            drawPymunkCircle(ATP.shape, screen, relativeTo=cell.shape.body.position)
+            drawPymunkCircle(ATP.shape, screen, relativeTo=cell.shape.body.position, scale=cameraZoom, cameraPosition=cameraPosition)
         drawPymunkCircle(
-            cell.nucleus.shape, screen, relativeTo=cell.shape.body.position
+            cell.nucleus.shape, screen, relativeTo=cell.shape.body.position, scale=cameraZoom, cameraPosition=cameraPosition
         )
 
     for cell in cells:
@@ -87,13 +90,13 @@ while not done:
 
     keystate = pygame.key.get_pressed()
     if keystate[pygame.K_LEFT]:
-        print("key pressed")
+        cameraPosition.x += (1 * (cameraZoom**10 + 1))
     if keystate[pygame.K_RIGHT]:
-        print("key pressed")
+        cameraPosition.x -= (1 * (cameraZoom**10 + 1))
     if keystate[pygame.K_UP]:
-        print("key pressed")
+        cameraPosition.y -= (1 * (cameraZoom**10 + 1))
     if keystate[pygame.K_DOWN]:
-        print("key pressed")
+        cameraPosition.y += (1 * (cameraZoom**10 + 1))
 
     if keystate[pygame.K_a]:
         print("key pressed")
@@ -103,6 +106,13 @@ while not done:
         print("key pressed")
     if keystate[pygame.K_s]:
         print("key pressed")
+
+    if keystate[pygame.K_z]:
+        print("z key pressed")
+        cameraZoom += 0.01
+    if keystate[pygame.K_x]:
+        print("x key pressed")
+        cameraZoom -= 0.01
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

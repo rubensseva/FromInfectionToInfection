@@ -7,47 +7,63 @@ def pymunkToPygameCoords(vector, displayHeight):
     vector.y = displayHeight - vector.y
     return vector
 
-
-def drawPymunkCircle(pymunk_circle, screen, relativeTo=Vec2d(0.0, 0.0)):
-    height = screen.get_height()
-    lineThickness = 1
-    radius = pymunk_circle.radius
-    x, y = pymunkToPygameCoords(pymunk_circle.body.position + relativeTo, height)
-    pygame.gfxdraw.circle(
-        screen, int(x), int(y), int(pymunk_circle.radius), (255, 255, 255)
+def zoom(position, scale, screen):
+    total_pix = screen.get_height() + screen.get_width()
+    height_frac = total_pix / screen.get_height()
+    width_frac = total_pix / screen.get_width()
+    return Vec2d(
+        position.x * (1 + scale),
+        position.y * (1 + scale)
     )
 
 
-def drawPymunkPoly(pymunk_poly, screen, relativeTo=Vec2d(0.0, 0.0)):
+def drawPymunkCircle(pymunk_circle, screen, relativeTo=Vec2d(0.0, 0.0), scale=0, cameraPosition=Vec2d(0,0)):
+    height = screen.get_height()
+    position = pymunk_circle.body.position + cameraPosition + relativeTo
+    zoomed_pos = zoom(position, scale, screen)
+    x, y = pymunkToPygameCoords(zoomed_pos, height)
+    pygame.gfxdraw.circle(
+        screen, int(x), int(y), int(pymunk_circle.radius * (1 + scale)), (255, 255, 255)
+    )
+
+
+def drawPymunkPoly(pymunk_poly, screen, relativeTo=Vec2d(0.0, 0.0), scale=0, cameraPosition=Vec2d(0,0)):
     height = screen.get_height()
     lineThickness = 2
     points = []
+    body_position = pymunk_poly.body.position
     for v in pymunk_poly.get_vertices():
-        body_position = pymunk_poly.body.position
         relative_position = v.rotated(pymunk_poly.body.angle)
+        this_position = body_position + relative_position + relativeTo + cameraPosition
+        zoomed_pos = zoom(this_position, scale, screen)
         x, y = pymunkToPygameCoords(
-            relative_position + body_position + relativeTo, height
+            zoomed_pos, height
         )
         points.append((int(x), int(y)))
     last_v = pymunk_poly.get_vertices()[0]
-    body_position = pymunk_poly.body.position
     relative_position = last_v.rotated(pymunk_poly.body.angle)
-    x, y = pymunkToPygameCoords(relative_position + body_position + relativeTo, height)
+    this_position = body_position + relative_position + relativeTo + cameraPosition
+    zoomed_pos = zoom(this_position, scale, screen)
+    x, y = pymunkToPygameCoords(zoomed_pos, height)
     points.append((int(x), int(y)))
     pygame.draw.lines(screen, (255, 255, 255), False, points, lineThickness)
 
 
-def drawPymunkSegments(body, screen):
+def drawPymunkSegments(body, screen, scale=0, cameraPosition=Vec2d(0,0)):
     height = screen.get_height()
     shapes = body.shapes
     lineThickness = 2
     points = []
     for shape in shapes:
+        a_pos = shape.a.rotated(body.angle) + body.position + cameraPosition
+        zoomed_pos = zoom(a_pos, scale, screen)
         ax, ay = pymunkToPygameCoords(
-            shape.a.rotated(body.angle) + body.position, height
+            zoomed_pos, height
         )
+        b_pos = shape.b.rotated(body.angle) + body.position + cameraPosition
+        zoomed_pos = zoom(b_pos, scale, screen)
         bx, by = pymunkToPygameCoords(
-            shape.b.rotated(body.angle) + body.position, height
+            zoomed_pos, height
         )
         points.append((int(ax), int(ay)))
         points.append((int(bx), int(by)))
