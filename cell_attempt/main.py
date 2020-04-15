@@ -107,9 +107,6 @@ while not done:
             cells.append(new_cell)
             space.add(new_cell.shape.body, new_cell.shape)
 
-    # drawPymunkPoly(inner_block_poly, screen, relativeTo=outer_block.position)
-    # drawPolyRelativeToBody(inner_block_poly, outer_block, screen)
-
     keystate = pygame.key.get_pressed()
     if keystate[pygame.K_LEFT]:
         cameraPosition.x += 1 * (cameraZoom ** 10 + 1)
