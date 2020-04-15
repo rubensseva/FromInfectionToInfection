@@ -65,16 +65,34 @@ while not done:
         cell.apply_rand_force()
 
     for cell in cells:
-        drawPymunkCircle(cell.shape, screen, scale=cameraZoom, cameraPosition=cameraPosition)
+        drawPymunkCircle(
+            cell.shape, screen, scale=cameraZoom, cameraPosition=cameraPosition
+        )
 
     for cell in cells:
         for mitochondrion in cell.mitochondria:
             for snake_part in mitochondrion.snake:
-                drawPymunkPoly(snake_part, screen, relativeTo=cell.shape.body.position, scale=cameraZoom, cameraPosition=cameraPosition)
+                drawPymunkPoly(
+                    snake_part,
+                    screen,
+                    relativeTo=cell.shape.body.position,
+                    scale=cameraZoom,
+                    cameraPosition=cameraPosition,
+                )
         for ATP in cell.ATP:
-            drawPymunkCircle(ATP.shape, screen, relativeTo=cell.shape.body.position, scale=cameraZoom, cameraPosition=cameraPosition)
+            drawPymunkCircle(
+                ATP.shape,
+                screen,
+                relativeTo=cell.shape.body.position,
+                scale=cameraZoom,
+                cameraPosition=cameraPosition,
+            )
         drawPymunkCircle(
-            cell.nucleus.shape, screen, relativeTo=cell.shape.body.position, scale=cameraZoom, cameraPosition=cameraPosition
+            cell.nucleus.shape,
+            screen,
+            relativeTo=cell.shape.body.position,
+            scale=cameraZoom,
+            cameraPosition=cameraPosition,
         )
 
     for cell in cells:
@@ -90,13 +108,13 @@ while not done:
 
     keystate = pygame.key.get_pressed()
     if keystate[pygame.K_LEFT]:
-        cameraPosition.x += (1 * (cameraZoom**10 + 1))
+        cameraPosition.x += 1 * (cameraZoom ** 10 + 1)
     if keystate[pygame.K_RIGHT]:
-        cameraPosition.x -= (1 * (cameraZoom**10 + 1))
+        cameraPosition.x -= 1 * (cameraZoom ** 10 + 1)
     if keystate[pygame.K_UP]:
-        cameraPosition.y -= (1 * (cameraZoom**10 + 1))
+        cameraPosition.y -= 1 * (cameraZoom ** 10 + 1)
     if keystate[pygame.K_DOWN]:
-        cameraPosition.y += (1 * (cameraZoom**10 + 1))
+        cameraPosition.y += 1 * (cameraZoom ** 10 + 1)
 
     if keystate[pygame.K_a]:
         print("key pressed")
