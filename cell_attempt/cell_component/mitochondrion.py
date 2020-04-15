@@ -12,7 +12,7 @@ create_ATP_cooldown_time = 2
 
 
 class Mitochondrion(Snake):
-    def __init__(self, parentCell, init_position=Vec2d(0.0, 0.0), init_angle=0.0):
+    def __init__(self, parent_cell, init_position=Vec2d(0.0, 0.0), init_angle=0.0):
         super().__init__(
             init_position=init_position,
             init_angle=init_angle,
@@ -28,7 +28,7 @@ class Mitochondrion(Snake):
             snake_move_force=15,
             snake_rotation_force=1,
         )
-        self.parentCell = parentCell
+        self.parent_cell = parent_cell
         self.birth_time = time.time()
         self.last_grow_time = self.birth_time
         self.last_create_ATP_time = self.birth_time
@@ -42,9 +42,9 @@ class Mitochondrion(Snake):
             and random.random() < 0.01
         ) or random.random() < 0.0001:
             constraint = self.grow()
-            new_snake_part = self.getLastBlock()
-            self.parentCell.relative_space.add(new_snake_part.body, new_snake_part)
-            self.parentCell.relative_space.add(constraint)
+            new_snake_part = self.get_last_block()
+            self.parent_cell.relative_space.add(new_snake_part.body, new_snake_part)
+            self.parent_cell.relative_space.add(constraint)
             self.last_grow_time = time.time()
 
         # Create ATP
@@ -53,7 +53,7 @@ class Mitochondrion(Snake):
             current_time - self.last_create_ATP_time > create_ATP_cooldown_time
             and random.random() < 0.05
         ):
-            self.parentCell.create_ATP(init_position=self.head.body.position)
+            self.parent_cell.create_ATP(init_position=self.head.body.position)
             self.last_create_ATP_time = time.time()
 
         # Move

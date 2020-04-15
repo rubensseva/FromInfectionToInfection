@@ -8,7 +8,7 @@ from blob import Blob
 
 
 class Nucleus(Blob):
-    def __init__(self, parentCell, init_position=Vec2d(0.0, 0.0)):
+    def __init__(self, parent_cell, init_position=Vec2d(0.0, 0.0)):
         super().__init__(
             init_position=init_position,
             init_mass=10000,
@@ -17,7 +17,7 @@ class Nucleus(Blob):
             move_force=500,
             growth_factor=1,
         )
-        self.parentCell = parentCell
+        self.parent_cell = parent_cell
 
     def time_step(self):
         self.move()

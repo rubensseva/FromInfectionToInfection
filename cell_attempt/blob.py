@@ -35,10 +35,10 @@ class Blob:
         self.time_of_last_turn = time.time() - 10000
         self.move_state = "FORWARD"
         self.move_dict = {
-            "FORWARD": self.moveForward,
-            "LEFT": self.moveLeft,
-            "RIGHT": self.moveRight,
-            "BACK": self.moveBack,
+            "FORWARD": self.move_forward,
+            "LEFT": self.move_left,
+            "RIGHT": self.move_right,
+            "BACK": self.move_back,
         }
         self.change_dir_ask()
 
@@ -63,18 +63,18 @@ class Blob:
     def move(self):
         self.move_dict[self.move_state]()
 
-    def moveForward(self):
+    def move_forward(self):
         body = self.shape.body
         body.apply_impulse_at_local_point((0, self.move_force), (0, 0))
 
-    def moveRight(self):
+    def move_right(self):
         body = self.shape.body
         body.apply_impulse_at_local_point((self.move_force, 0), (0, 0))
 
-    def moveLeft(self):
+    def move_left(self):
         body = self.shape.body
         body.apply_impulse_at_local_point((-self.move_force, 0), (0, 0))
 
-    def moveBack(self):
+    def move_back(self):
         body = self.shape.body
         body.apply_impulse_at_local_point((0, -self.move_force), (0, 0))

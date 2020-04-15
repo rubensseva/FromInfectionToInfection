@@ -66,13 +66,13 @@ class Snake:
         self.time_of_last_turn = time.time() - 10000
         self.move_state = "FORWARD"
         self.move_dict = {
-            "FORWARD": self.moveForward,
-            "LEFT": self.moveLeft,
-            "RIGHT": self.moveRight,
+            "FORWARD": self.move_forward,
+            "LEFT": self.move_left,
+            "RIGHT": self.move_right,
         }
         self.change_dir_ask()
 
-    def getLastBlock(self):
+    def get_last_block(self):
         return self.snake[len(self.snake) - 1]
 
     def grow(self):
@@ -108,11 +108,11 @@ class Snake:
     def move(self):
         self.move_dict[self.move_state]()
 
-    def moveForward(self):
+    def move_forward(self):
         head_body = self.head.body
         head_body.apply_impulse_at_local_point((0, self.snake_move_force), (0, 0))
 
-    def moveRight(self):
+    def move_right(self):
         head_body = self.head.body
         head_body.apply_impulse_at_local_point(
             (self.snake_rotation_force, 0), (0, self.snake_rotation_y_point)
@@ -121,7 +121,7 @@ class Snake:
             (-self.snake_rotation_force, 0), (0, -self.snake_rotation_y_point)
         )
 
-    def moveLeft(self):
+    def move_left(self):
         head_body = self.head.body
         head_body.apply_impulse_at_local_point(
             (-self.snake_rotation_force, 0), (0, self.snake_rotation_y_point)
