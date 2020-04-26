@@ -8,14 +8,15 @@ import pygame.transform
 import random
 import time
 
-from pygame_pymunk_translation import (
+from other.pygame_pymunk_translation import (
     draw_pymunk_circle,
     draw_pymunk_segments,
     draw_pymunk_poly,
 )
-from cell import Cell
 
-from other.food_molecule import FoodMolecule
+from cell.cell import Cell
+
+from molecules.food_molecule import FoodMolecule
 
 
 class World:

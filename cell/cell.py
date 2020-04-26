@@ -4,11 +4,11 @@ import random
 import math
 import time
 
-from cell_component.mitochondrion import Mitochondrion
-from cell_component.nucleus import Nucleus
-from cell_component.atp import ATP
+from cell.cell_component.mitochondrion import Mitochondrion
+from cell.cell_component.nucleus import Nucleus
+from cell.cell_component.atp import ATP
 
-from infection_utils import (
+from other.infection_utils import (
     approximate_circle,
     is_within_circle,
     convert_points_to_pymunk_segments,

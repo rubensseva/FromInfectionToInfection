@@ -4,20 +4,21 @@ from pymunk.vec2d import Vec2d
 import random
 import time
 
-from blob import Blob
+from shapes.blob import Blob
 
 
-class Nucleus(Blob):
-    def __init__(self, parent_cell, init_position=Vec2d(0.0, 0.0)):
+class FoodMolecule(Blob):
+    def __init__(self, parent_cell=None, init_position=Vec2d(0.0, 0.0)):
         super().__init__(
             init_position=init_position,
-            init_mass=10000,
-            init_moment=1000000,
-            init_radius=20,
-            move_force=500,
+            init_mass=1,
+            init_moment=100,
+            init_radius=5,
+            move_force=0.1,
             growth_factor=1,
         )
         self.parent_cell = parent_cell
+        print("Food molecule created")
 
     def time_step(self):
         self.move()
