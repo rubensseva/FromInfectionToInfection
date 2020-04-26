@@ -97,7 +97,7 @@ class World:
                     molecule.shape,
                     self.screen,
                     scale=self.camera_zoom,
-                    cameraPosition=self.camera_position,
+                    camera_position=self.camera_position,
                 )
              
 
@@ -106,7 +106,7 @@ class World:
 
             for cell in self.cells:
                 draw_pymunk_circle(
-                    cell.shape, self.screen, scale=self.camera_zoom, cameraPosition=self.camera_position
+                    cell.shape, self.screen, scale=self.camera_zoom, camera_position=self.camera_position
                 )
 
             for cell in self.cells:
@@ -115,24 +115,24 @@ class World:
                         draw_pymunk_poly(
                             snake_part,
                             self.screen,
-                            relativeTo=cell.shape.body.position,
+                            relative_to=cell.shape.body.position,
                             scale=self.camera_zoom,
-                            cameraPosition=self.camera_position,
+                            camera_position=self.camera_position,
                         )
                 for ATP in cell.ATP:
                     draw_pymunk_circle(
                         ATP.shape,
                         self.screen,
-                        relativeTo=cell.shape.body.position,
+                        relative_to=cell.shape.body.position,
                         scale=self.camera_zoom,
-                        cameraPosition=self.camera_position,
+                        camera_position=self.camera_position,
                     )
                 draw_pymunk_circle(
                     cell.nucleus.shape,
                     self.screen,
-                    relativeTo=cell.shape.body.position,
+                    relative_to=cell.shape.body.position,
                     scale=self.camera_zoom,
-                    cameraPosition=self.camera_position,
+                    camera_position=self.camera_position,
                 )
 
             for cell in self.cells:
