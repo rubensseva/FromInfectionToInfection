@@ -32,7 +32,11 @@ def draw_pymunk_circle(
 
 
 def draw_pymunk_poly(
-    pymunk_poly, screen, relative_to=Vec2d(0.0, 0.0), scale=0, camera_position=Vec2d(0, 0)
+    pymunk_poly,
+    screen,
+    relative_to=Vec2d(0.0, 0.0),
+    scale=0,
+    camera_position=Vec2d(0, 0),
 ):
     height = screen.get_height()
     line_thickness = 2
@@ -40,7 +44,9 @@ def draw_pymunk_poly(
     body_position = pymunk_poly.body.position
     for v in pymunk_poly.get_vertices():
         relative_position = v.rotated(pymunk_poly.body.angle)
-        this_position = body_position + relative_position + relative_to + camera_position
+        this_position = (
+            body_position + relative_position + relative_to + camera_position
+        )
         zoomed_pos = zoom(this_position, scale, screen)
         x, y = pymunk_to_pygame_coords(zoomed_pos, height)
         points.append((int(x), int(y)))

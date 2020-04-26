@@ -20,7 +20,6 @@ from molecules.food_molecule import FoodMolecule
 
 
 class World:
-
     def __init__(self):
         self.width = 1000
         self.height = 1000
@@ -44,8 +43,6 @@ class World:
         self.camera_zoom = 0
         self.camera_position = Vec2d(0, 0)
 
-
-
     def borders(self):
         pass
         # floor = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
@@ -65,8 +62,6 @@ class World:
         # left_wall_poly = pymunk.Poly.create_box(left_wall, (10, height))
         # space.add(left_wall, left_wall_poly)
 
-    
-
     def run(self):
         pygame.init()
 
@@ -81,12 +76,13 @@ class World:
             last_time = current_time
             self.space.step(elapsed_time)
 
-            
             curr_molecule_time = time.time()
             elapsed_molecule_time = curr_molecule_time - last_molecule_time
             if elapsed_molecule_time > 2:
 
-                init_molecule_pos = Vec2d(random.uniform(-2000, 2000), random.uniform(-2000, 2000))
+                init_molecule_pos = Vec2d(
+                    random.uniform(-2000, 2000), random.uniform(-2000, 2000)
+                )
                 new_molecule = FoodMolecule(init_position=init_molecule_pos)
                 self.molecules.append(new_molecule)
                 self.space.add(new_molecule.shape.body, new_molecule.shape)
@@ -99,14 +95,16 @@ class World:
                     scale=self.camera_zoom,
                     camera_position=self.camera_position,
                 )
-             
 
             for cell in self.cells:
                 cell.move()
 
             for cell in self.cells:
                 draw_pymunk_circle(
-                    cell.shape, self.screen, scale=self.camera_zoom, camera_position=self.camera_position
+                    cell.shape,
+                    self.screen,
+                    scale=self.camera_zoom,
+                    camera_position=self.camera_position,
                 )
 
             for cell in self.cells:
