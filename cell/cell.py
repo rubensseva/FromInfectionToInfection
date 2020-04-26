@@ -132,9 +132,7 @@ class Cell:
         for molecule in molecules_copy:
             x, y = molecule.shape.body.position - self.shape.body.position
             current_dist = math.sqrt(x ** 2 + y ** 2)
-            print(current_dist)
             if current_dist < self.radius * 2:
-                print("removing")
                 self.world.space.remove(molecule.shape, molecule.shape.body)
                 self.world.molecules.remove(molecule)
                 molecule.shape.body.position = Vec2d(0.0, 0.0)
@@ -164,7 +162,6 @@ class Cell:
     def move(self):
         if self.target:
             target_vec = self.target - self.shape.body.position
-            print("moving to target", target_vec)
             self.shape.body.apply_force_at_local_point(target_vec / 10, point=(0, 0))
         else:
             self.apply_rand_force()
