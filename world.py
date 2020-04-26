@@ -33,7 +33,7 @@ class World:
         self.space = pymunk.Space()
         self.space.damping = 0.7
 
-        first_cell = Cell()
+        first_cell = Cell(self)
 
         self.cells = [first_cell]
 
@@ -102,7 +102,7 @@ class World:
              
 
             for cell in self.cells:
-                cell.apply_rand_force()
+                cell.move()
 
             for cell in self.cells:
                 draw_pymunk_circle(
@@ -127,6 +127,15 @@ class World:
                         scale=self.camera_zoom,
                         camera_position=self.camera_position,
                     )
+                for food_molecule in cell.molecules:
+                    draw_pymunk_circle(
+                        food_molecule.shape,
+                        self.screen,
+                        relative_to=cell.shape.body.position,
+                        scale=self.camera_zoom,
+                        camera_position=self.camera_position,
+                    )
+
                 draw_pymunk_circle(
                     cell.nucleus.shape,
                     self.screen,
@@ -174,7 +183,7 @@ class World:
                     done = True
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        cell = Cell()
+                        cell = Cell(self)
                         self.space.add(cell.shape.body, cell.shape)
                         self.cells.append(cell)
                         print("Space pressed")

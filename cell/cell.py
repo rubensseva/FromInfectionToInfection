@@ -41,11 +41,13 @@ mitochondria_limit = 4
 class Cell:
     def __init__(
         self,
+        world,
         x=init_x,
         y=init_y,
         init_num_ATP=init_num_ATP_default,
         init_num_mitochondria=init_num_mitochondria_default,
     ):
+        self.world = world
         self.ATP_reservoir_states = {
             "EMPTY": 0,
             "STARVING": 5,
@@ -54,6 +56,7 @@ class Cell:
             "HIGH": 60,
             "ABUNDANT": 200,
         }
+        self.target = None
 
         self.last_simulation_update = time.time()
 
@@ -98,12 +101,48 @@ class Cell:
         for i in range(init_num_ATP):
             self.create_ATP()
 
+
+        self.molecules = []
+
         rand_x = random.uniform(-init_rad / 4, init_rad / 4)
         rand_y = random.uniform(-init_rad / 4, init_rad / 4)
         self.nucleus = Nucleus(self, init_position=Vec2d(rand_x, rand_y))
         self.relative_space.add(self.nucleus.shape, self.nucleus.shape.body)
 
         self.update_split_growth_target()
+
+
+    def find_closest_molecule(self):
+        closest_dist = 999999999
+        closest_molecule = None
+        for molecule in self.world.molecules:
+            x, y = molecule.shape.body.position
+            x, y = (x - self.shape.body.position.x, y - self.shape.body.position.y)
+            current_dist = (x**2 + y**2)
+            if (current_dist < closest_dist):
+                closest_dist = current_dist
+                closest_molecule = molecule
+        if (closest_molecule):
+            return closest_molecule.shape.body.position
+        return None
+
+    def update_target(self):
+        self.target = self.find_closest_molecule()
+
+    def absorb_close_food_molecules(self):
+        molecules_copy = self.world.molecules.copy()
+        for molecule in molecules_copy:
+            x, y = molecule.shape.body.position - self.shape.body.position
+            current_dist = math.sqrt(x**2 + y**2)
+            print(current_dist)
+            if (current_dist < self.radius * 2 ):
+                print("removing")
+                self.world.space.remove(molecule.shape, molecule.shape.body)
+                self.world.molecules.remove(molecule)
+                molecule.shape.body.position = Vec2d(0.0, 0.0)
+                self.molecules.append(molecule)
+                self.relative_space.add(molecule.shape, molecule.shape.body)
+
 
     def remove_ATP(self, num_ATP):
         if num_ATP > len(self.ATP):
@@ -124,6 +163,16 @@ class Cell:
         self.split_growth_target = random.randint(
             split_growth_target_min, split_growth_target_max
         )
+
+    
+    def move(self):
+        if (self.target):
+            target_vec = self.target - self.shape.body.position
+            print("moving to target", target_vec)
+            self.shape.body.apply_force_at_local_point(target_vec/10, point=(0, 0))
+        else:
+            self.apply_rand_force()
+
 
     def apply_rand_force(self):
         rand_x = (0.5 - random.random()) * 5
@@ -188,6 +237,7 @@ class Cell:
         self.mitochondria = remaining_mitochondria
         self.growth_penalty_length = self.growth
         return Cell(
+            self.world,
             self.shape.body.position.x + rand_x,
             self.shape.body.position.y + rand_y,
             init_num_ATP=len(transferred_atp),
@@ -255,6 +305,8 @@ class Cell:
 
     def time_step(self):
         self.remove_lost_components_check()
+        self.update_target()
+        self.absorb_close_food_molecules()
         # Grow
         self.grow_check()
         # Shrink
